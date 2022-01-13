@@ -18,6 +18,7 @@ config NORDIC_SECURITY_PROMPTLESS
 config NORDIC_SECURITY_BACKEND
 	bool
 	prompt "Use nrf_security module" if !NORDIC_SECURITY_PROMPTLESS
+	depends on SOC_FAMILY_NRF
 	select NRF_SECURITY
 	select MBEDTLS_LEGACY_CRYPTO_C
 	select OBERON_BACKEND
@@ -30,6 +31,7 @@ config NORDIC_SECURITY_BACKEND
 config NRF_SECURITY
 	bool
 	prompt "Use nrf_security module" if !PSA_PROMPTLESS
+	depends on SOC_FAMILY_NRF
 	default y
 	select ENTROPY_GENERATOR
 	help
