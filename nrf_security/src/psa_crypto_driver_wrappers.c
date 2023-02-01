@@ -1723,6 +1723,18 @@ psa_status_t psa_driver_wrapper_aead_decrypt(
     }
 }
 
+psa_status_t psa_driver_get_tag_len( psa_aead_operation_t *operation,
+                                     uint8_t *tag_len )
+{
+    if (operation->ctx.tag_length) {
+        *tag_len = operation->ctx.tag_length;
+
+        return PSA_SUCCESS;
+    }
+
+    return( PSA_ERROR_INVALID_ARGUMENT );
+}
+
 psa_status_t psa_driver_wrapper_aead_encrypt_setup(
    psa_aead_operation_t *operation,
    const psa_key_attributes_t *attributes,
@@ -1732,6 +1744,7 @@ psa_status_t psa_driver_wrapper_aead_encrypt_setup(
     psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
     psa_key_location_t location =
         PSA_KEY_LIFETIME_GET_LOCATION( attributes->core.lifetime );
+    operation->ctx.tag_length = PSA_ALG_AEAD_GET_TAG_LENGTH(alg);
 
     switch( location )
     {
@@ -1799,6 +1812,7 @@ psa_status_t psa_driver_wrapper_aead_decrypt_setup(
     psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
     psa_key_location_t location =
         PSA_KEY_LIFETIME_GET_LOCATION( attributes->core.lifetime );
+    operation->ctx.tag_length = PSA_ALG_AEAD_GET_TAG_LENGTH(alg);
 
     switch( location )
     {

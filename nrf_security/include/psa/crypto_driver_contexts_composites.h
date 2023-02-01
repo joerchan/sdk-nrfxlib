@@ -86,6 +86,7 @@ typedef union {
     oberon_aead_operation_t oberon_driver_ctx;
 #endif /* PSA_CRYPTO_DRIVER_OBERON */
 
+    size_t tag_length;            /*!< Size of the authentication tag */
 } psa_driver_aead_context_t;
 
 #endif /* PSA_CRYPTO_DRIVER_CONTEXTS_COMPOSITES_H */
