@@ -189,6 +189,8 @@ append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
   platform_util.c
   version.c
   constant_time.c
+
+  hkdf.c
 )
 
 # Add base library with files required by all drivers/backends.
