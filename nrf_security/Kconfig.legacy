@@ -551,6 +551,7 @@ config MBEDTLS_ECDSA_C
 	bool
 	prompt "ECDSA - Elliptic Curve Digital Signature Algorithm"
 	default y
+	depends on MBEDTLS_PK_WRITE_C || !MBEDTLS_USE_PSA_CRYPTO
 	help
 	  Enable the ECDSA module.
 	  MBEDTLS_ECDSA_C setting in mbed TLS config file.
@@ -678,6 +679,10 @@ config MBEDTLS_RSA_C
 	bool
 	prompt "RSA - Rivest–Shamir–Adleman cryptosystem"
 	default y
+	# Note: In MBed TLS 3.2.1 this actually depends on MBEDTLS_PSA_CRYPTO.
+	# But we have modified this dependency to be MBEDTLS_USE_PSA_CRYPTO_C instead.
+	# NCSDK-19904: Also see: https://github.com/Mbed-TLS/mbedtls/issues/7126
+	depends on MBEDTLS_PK_WRITE_C || !MBEDTLS_USE_PSA_CRYPTO
 	help
 	  Enable RSA cryptosystem support.
 	  MBEDTLS_RSA_C setting in mbed TLS config file.
