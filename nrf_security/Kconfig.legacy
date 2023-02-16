@@ -781,6 +781,7 @@ config MBEDTLS_MD_C
 config MBEDTLS_PK_C
 	bool
 	prompt "Enable PK support"
+	default y if MBEDTLS_USE_PSA_CRYPTO && !MBEDTLS_PSA_CRYPTO_SPM
 
 config MBEDTLS_PKCS5_C
 	bool
@@ -791,7 +792,7 @@ config MBEDTLS_PKCS5_C
 config MBEDTLS_PK_WRITE_C
 	bool
 	prompt "Enable PK write support"
-	# default y if MBEDTLS_USE_PSA_CRYPTO && !MBEDTLS_PSA_CRYPTO_SPM
+	default y if MBEDTLS_USE_PSA_CRYPTO && !MBEDTLS_PSA_CRYPTO_SPM
 
 config MBEDTLS_PK_PARSE_C
 	bool
