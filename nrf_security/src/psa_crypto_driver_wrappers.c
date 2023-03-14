@@ -55,6 +55,8 @@
 #include "nrf_cc3xx_platform_hmac_drbg.h"
 #endif
 
+#include "nrf_cc3xx_platform_entropy.h"
+
 #if defined(PSA_CRYPTO_DRIVER_OBERON)
 #ifndef PSA_CRYPTO_DRIVER_PRESENT
 #define PSA_CRYPTO_DRIVER_PRESENT
@@ -3055,5 +3057,35 @@ psa_status_t psa_driver_wrapper_free_random(
 }
 
 #endif /* CONFIG_PSA_CORE_OBERON */
+
+psa_status_t psa_driver_wrapper_get_entropy(
+    uint32_t flags,
+    size_t* estimate_bits,
+    uint8_t* output,
+    size_t output_size)
+{
+#if defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX)
+    /* CC3XX random will handle entropy internally. */
+    return PSA_ERROR_NOT_SUPPORTED;
+#else
+    // TODO : Clear up this: olen vs estimate_bytes
+    size_t estimate_bytes;
+
+    psa_status_t status = nrf_cc3xx_platform_entropy_get(output,
+                                                         output_size,
+                                                         &estimate_bytes);
+    if (status == PSA_SUCCESS) {
+        *estimate_bits = PSA_BYTES_TO_BITS(estimate_bytes);
+    }
+
+    return status;
+#endif
+
+    (void)flags;
+    (void)output;
+    (void)output_size;
+    *estimate_bits = 0;
+    return PSA_ERROR_INSUFFICIENT_ENTROPY;
+}
 
 #endif /* MBEDTLS_PSA_CRYPTO_C */
