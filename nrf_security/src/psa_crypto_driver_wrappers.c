@@ -96,6 +96,9 @@
 #ifdef PSA_NEED_OBERON_HMAC_DRBG_DRIVER
 #include "oberon_hmac_drbg.h"
 #endif
+#if defined(PSA_CRYPTO_DRIVER_HAS_ASYM_ENCRYPT_SUPPORT_OBERON)
+#include "oberon_rsa.h"
+#endif
 
 /* Include TF-M builtin key driver */
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
@@ -2871,6 +2874,19 @@ psa_status_t psa_driver_wrapper_asymmetric_encrypt(const psa_key_attributes_t *a
                                                output_length );
             return( status );
 #endif /* PSA_CRYPTO_DRIVER_HAS_ASYM_ENCRYPT_SUPPORT_CC3XX */
+#if defined(PSA_CRYPTO_DRIVER_HAS_ASYM_ENCRYPT_SUPPORT_OBERON)
+            status = oberon_asymmetric_encrypt(attributes,
+                                               key_buffer,
+                                               key_buffer_size,
+                                               alg,
+                                               input,
+                                               input_length,
+                                               salt,
+                                               salt_length,
+                                               output,
+                                               output_size,
+                                               output_length);
+#endif /* PSA_CRYPTO_DRIVER_HAS_ASYM_ENCRYPT_SUPPORT_OBERON */
 #endif  /* PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT */
             (void) status;
             return ( PSA_ERROR_NOT_SUPPORTED );
@@ -2927,6 +2943,19 @@ psa_status_t psa_driver_wrapper_asymmetric_decrypt(const psa_key_attributes_t *a
                                                output_length );
             return( status );
 #endif /* PSA_CRYPTO_DRIVER_HAS_ASYM_ENCRYPT_SUPPORT_CC3XX */
+#if defined(PSA_CRYPTO_DRIVER_HAS_ASYM_ENCRYPT_SUPPORT_OBERON)
+        return oberon_asymmetric_decrypt(attributes,
+                                         key_buffer,
+                                         key_buffer_size,
+                                         alg,
+                                         input,
+                                         input_length,
+                                         salt,
+                                         salt_length,
+                                         output,
+                                         output_size,
+                                         output_length);
+#endif /* PSA_CRYPTO_DRIVER_HAS_ASYM_ENCRYPT_SUPPORT_OBERON */
 #endif /* PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT */
             (void) status;
             return( PSA_ERROR_NOT_SUPPORTED );
