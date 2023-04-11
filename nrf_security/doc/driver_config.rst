@@ -280,6 +280,11 @@ To enable Rivest-Shamir-Adleman (RSA) support, set one or more of the following 
 RSA driver configurations
 =========================
 
+
+
+
+
+
 You can use the following Kconfig options for fine-grained control over which drivers provide RSA support:
 
 +-----------------------+--------------------------------------------------------------------------+----------------------------+
