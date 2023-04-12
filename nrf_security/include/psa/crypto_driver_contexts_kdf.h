@@ -42,6 +42,15 @@
 #if defined(PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON)
 #include "oberon_kdf.h"
 #endif
+#ifdef PSA_NEED_OBERON_JPAKE_DRIVER
+#include "oberon_jpake.h"
+#endif
+#ifdef PSA_NEED_OBERON_SPAKE2P_DRIVER
+#include "oberon_spake2p.h"
+#endif
+#ifdef PSA_NEED_OBERON_SRP_DRIVER
+#include "oberon_srp.h"
+#endif
 #ifdef PSA_NEED_OBERON_CTR_DRBG_DRIVER
 #include "oberon_ctr_drbg.h"
 #endif
@@ -64,6 +73,15 @@ typedef union {
 
 typedef union {
     unsigned dummy; /* Make sure this union is always non-empty */
+#ifdef PSA_NEED_OBERON_JPAKE_DRIVER
+    oberon_jpake_operation_t oberon_jpake_ctx;
+#endif
+#ifdef PSA_NEED_OBERON_SPAKE2P_DRIVER
+    oberon_spake2p_operation_t oberon_spake2p_ctx;
+#endif
+#ifdef PSA_NEED_OBERON_SRP_DRIVER
+    oberon_srp_operation_t oberon_srp_ctx;
+#endif
 } psa_driver_pake_context_t;
 
 typedef union {
