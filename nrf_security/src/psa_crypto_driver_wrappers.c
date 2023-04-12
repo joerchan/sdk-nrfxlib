@@ -77,6 +77,9 @@
 #if defined(PSA_CRYPTO_DRIVER_HAS_MAC_SUPPORT_OBERON)
 #include "oberon_mac.h"
 #endif
+#if defined(PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON)
+#include "oberon_kdf.h"
+#endif
 
 /* Include TF-M builtin key driver */
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
@@ -2612,6 +2615,126 @@ psa_status_t psa_driver_wrapper_mac_abort(
             return( PSA_ERROR_INVALID_ARGUMENT );
     }
 }
+
+#if defined CONFIG_PSA_CORE_OBERON
+/*
+ * Key derivation functions
+ */
+psa_status_t psa_driver_wrapper_key_derivation_setup(
+    psa_key_derivation_operation_t *operation,
+    psa_algorithm_t alg)
+{
+    psa_status_t status;
+
+#if defined(PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON)
+    status = oberon_key_derivation_setup(
+        &operation->ctx.oberon_kdf_ctx,
+        alg);
+    if (status == PSA_SUCCESS) operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
+    return status;
+#endif /* PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON */
+
+    (void)status;
+    (void)operation;
+    (void)alg;
+    return PSA_ERROR_NOT_SUPPORTED;
+}
+
+psa_status_t psa_driver_wrapper_key_derivation_set_capacity(
+    psa_key_derivation_operation_t *operation,
+    size_t capacity)
+{
+    switch (operation->id) {
+#if defined(PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON)
+    case PSA_CRYPTO_OBERON_DRIVER_ID:
+        return oberon_key_derivation_set_capacity(
+            &operation->ctx.oberon_kdf_ctx,
+            capacity);
+#endif /* PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON */
+
+    default:
+        (void)capacity;
+        return PSA_ERROR_BAD_STATE;
+    }
+}
+
+psa_status_t psa_driver_wrapper_key_derivation_input_bytes(
+    psa_key_derivation_operation_t *operation,
+    psa_key_derivation_step_t step,
+    const uint8_t *data, size_t data_length)
+{
+    switch (operation->id) {
+#if defined(PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON)
+    case PSA_CRYPTO_OBERON_DRIVER_ID:
+        return oberon_key_derivation_input_bytes(
+            &operation->ctx.oberon_kdf_ctx,
+            step,
+            data, data_length);
+#endif /* PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON */
+
+    default:
+        (void)step;
+        (void)data;
+        (void)data_length;
+        return PSA_ERROR_BAD_STATE;
+    }
+}
+
+psa_status_t psa_driver_wrapper_key_derivation_input_integer(
+    psa_key_derivation_operation_t *operation,
+    psa_key_derivation_step_t step,
+    uint64_t value)
+{
+    switch (operation->id) {
+#if defined(PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON)
+    case PSA_CRYPTO_OBERON_DRIVER_ID:
+        return oberon_key_derivation_input_integer(
+            &operation->ctx.oberon_kdf_ctx,
+            step,
+            value);
+#endif /* PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON */
+
+    default:
+        (void)step;
+        (void)value;
+        return PSA_ERROR_BAD_STATE;
+    }
+}
+
+psa_status_t psa_driver_wrapper_key_derivation_output_bytes(
+    psa_key_derivation_operation_t *operation,
+    uint8_t *output, size_t output_length)
+{
+    switch (operation->id) {
+#if defined(PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON)
+    case PSA_CRYPTO_OBERON_DRIVER_ID:
+        return oberon_key_derivation_output_bytes(
+            &operation->ctx.oberon_kdf_ctx,
+            output, output_length);
+#endif /* PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON */
+
+    default:
+        (void)output;
+        (void)output_length;
+        return PSA_ERROR_BAD_STATE;
+    }
+}
+
+psa_status_t psa_driver_wrapper_key_derivation_abort(
+    psa_key_derivation_operation_t *operation)
+{
+    switch (operation->id) {
+#if defined(PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON)
+    case PSA_CRYPTO_OBERON_DRIVER_ID:
+        return oberon_key_derivation_abort(&operation->ctx.oberon_kdf_ctx);
+#endif /* PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON */
+
+    default:
+        return PSA_SUCCESS;
+    }
+}
+
+#endif /* CONFIG_PSA_CORE_OBERON */
 
 /*
  * Key agreement functions

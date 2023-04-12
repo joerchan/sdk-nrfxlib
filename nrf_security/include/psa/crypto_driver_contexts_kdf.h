@@ -39,6 +39,10 @@
 
 /* Include the context structure definitions for enabled drivers. */
 
+#if defined(PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON)
+#include "oberon_kdf.h"
+#endif
+
 /* Define the context to be used for an operation that is executed through the
  * PSA Driver wrapper layer as the union of all possible drivers' contexts.
  *
@@ -47,6 +51,9 @@
 
 typedef union {
     unsigned dummy; /* Make sure this union is always non-empty */
+#ifdef PSA_NEED_OBERON_KDF_DRIVER
+    oberon_key_derivation_operation_t oberon_kdf_ctx;
+#endif
 } psa_driver_key_derivation_context_t;
 
 typedef union {
