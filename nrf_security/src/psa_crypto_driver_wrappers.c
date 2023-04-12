@@ -852,6 +852,13 @@ psa_status_t psa_driver_wrapper_export_public_key(
              /* Declared with fallback == true */
              if( status != PSA_ERROR_NOT_SUPPORTED )
                  return( status );
+#ifdef PSA_NEED_OBERON_RSA_DRIVER
+        status = oberon_export_rsa_public_key(
+            attributes, key_buffer, key_buffer_size,
+            data, data_size, data_length);
+        if (status != PSA_ERROR_NOT_SUPPORTED) return status;
+#endif /* PSA_NEED_OBERON_RSA_DRIVER */
+
 #endif /* PSA_CRYPTO_DRIVER_HAS_ACCEL_KEY_TYPES_OBERON */
 #endif /* PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT */
         /* Fell through, meaning no accelerator supports this operation.
