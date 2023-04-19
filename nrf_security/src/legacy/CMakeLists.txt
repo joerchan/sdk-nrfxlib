@@ -4,6 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+
+message(WARNING "Adding Legacy source files")
+# For TF-M we need to remove the call to mbedtls_hkdf in the builtin key loader.# return()
+# Also don't link with the legacy runtime libraries?
+
 # Legacy APIs missing driver support or APIs assumed to be
 # deprecated with more PSA API awareness.
 append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
