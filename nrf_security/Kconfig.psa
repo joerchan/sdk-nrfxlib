@@ -19,6 +19,19 @@ config PSA_WANT_ECC_TWISTED_EDWARDS_255
 config PSA_WANT_ALG_RIPEMD160
 	default n
 
+# TODO: Depends on PSA_CORE_OBERON?
+config PSA_WANT_ALG_MD5
+	bool
+	default n
+
+config PSA_WANT_ALG_CFB
+        bool
+	default n
+
+config PSA_WANT_ALG_OFB
+        bool
+	default n
+
 if MBEDTLS_PSA_CRYPTO_C
 
 config MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
