@@ -71,6 +71,7 @@ append_with_prefix_ifdef(src_crypto_builtin CONFIG_MBEDTLS_PSA_BUILTIN_SHA384_OR
 
 # Add builtin functionality (if enabled)
 if(DEFINED src_crypto_builtin)
+  message(WARNING "WHY IS THIS NOT FAILING??!?!?")
   target_sources(${mbedcrypto_target}
     PRIVATE
       src_crypto_builtin

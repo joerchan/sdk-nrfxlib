@@ -61,30 +61,6 @@ set(generated_include_path "${CMAKE_CURRENT_BINARY_DIR}/include/generated")
 
 # Empty out previous versions of config-files
 file(REMOVE_RECURSE ${generated_include_path})
-# Add generated path first in list (order dependent)
-target_include_directories(mbedcrypto_common
-    INTERFACE
-      ${generated_include_path}
-      ${NRF_SECURITY_ROOT}/include/
-      ${NRF_SECURITY_ROOT}/include/mbedtls
-)
-
-# Add custom PSA includes (if enabled)
-if(COMPILE_PSA_APIS)
-  target_include_directories(mbedcrypto_common
-    INTERFACE
-      ${NRF_SECURITY_ROOT}/include/psa
-  )
-endif()
-
-# Add regular includes
-target_include_directories(mbedcrypto_common
-  INTERFACE
-    ${ARM_MBEDTLS_PATH}/include
-    ${ARM_MBEDTLS_PATH}/include/mbedtls
-    ${ARM_MBEDTLS_PATH}/include/psa
-    ${ARM_MBEDTLS_PATH}/library
-)
 
 # Generate mbed TLS configurations
 if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR NOT COMPILE_PSA_APIS)
@@ -138,20 +114,6 @@ if (CONFIG_MBEDTLS_DEBUG)
 endif()
 
 if (COMPILE_PSA_APIS)
-  # Add files for PSA build
-  append_with_prefix(src_crypto ${ARM_MBEDTLS_PATH}/library/
-    psa_crypto.c
-    psa_crypto_aead.c
-    psa_crypto_cipher.c
-    psa_crypto_client.c
-    psa_crypto_ecp.c
-    psa_crypto_hash.c
-    psa_crypto_mac.c
-    psa_crypto_rsa.c
-    psa_crypto_slot_management.c
-    psa_crypto_storage.c
-  )
-
   # Add the local version of psa_crypto_driver_wrappers.c
   append_with_prefix(src_crypto ${CMAKE_CURRENT_LIST_DIR}
     psa_crypto_driver_wrappers.c
@@ -165,6 +127,7 @@ if(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG AND NOT CONFIG_BUILD_WITH_TFM)
   )
 endif()
 
+# TODO: Legacy??
 append_with_prefix(src_crypto ${ARM_MBEDTLS_PATH}/library
   pem.c
   pkcs12.c
@@ -173,6 +136,7 @@ append_with_prefix(src_crypto ${ARM_MBEDTLS_PATH}/library
   pkwrite.c
 )
 
+message(WARNING ${src_crypto})
 # Library for mbed TLS crypto toolbox functionality
 add_library(${mbedcrypto_target}
   STATIC
@@ -195,8 +159,17 @@ append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
   platform.c
   platform_util.c
   version.c
-  constant_time.c
+  # TODO: Is this file required by mbedcrypto?
+  # constant_time.c
 )
+
+if (CONFIG_PSA_CORE_BUILTIN)
+  # TODO: move this properly.
+  # TODO: Is append_with_prefix_ifdef broken?
+  append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
+    constant_time.c
+  )
+endif()
 
 # Add base library with files required by all drivers/backends.
 add_library(mbedcrypto_base
@@ -235,6 +208,8 @@ target_compile_options(${mbedcrypto_target} PRIVATE
   -Wno-stringop-overread
   -Wno-strict-aliasing
   )
+
+add_subdirectory(core)
 
 # Add drivers if enabled
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/drivers)
