@@ -99,18 +99,19 @@ config MBEDTLS_CHACHA20_ALT
 	bool
 	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
 		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
+	default y if !PSA_CORE_OBERON
 
 config MBEDTLS_POLY1305_ALT
 	bool
 	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
 		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
+	default y if !PSA_CORE_OBERON
 
 config MBEDTLS_CHACHAPOLY_ALT
 	bool
 	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
+	default n
+	default y if !PSA_CORE_OBERON
 	depends on MBEDTLS_CHACHA20_ALT
 
 config MBEDTLS_DHM_ALT
@@ -161,25 +162,25 @@ config MBEDTLS_ECJPAKE_ALT
 config MBEDTLS_RSA_ALT
 	bool
 	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
+	default y if !PSA_CORE_OBERON
 
 config MBEDTLS_SHA1_ALT
 	bool
 	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
 		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
+	default y if !PSA_CORE_OBERON
 
 config MBEDTLS_SHA224_ALT
 	bool
 	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
 		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
+	default y if !PSA_CORE_OBERON
 
 config MBEDTLS_SHA256_ALT
 	bool
 	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
 		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
+	default y if !PSA_CORE_OBERON
 
 config MBEDTLS_SHA384_ALT
 	bool
