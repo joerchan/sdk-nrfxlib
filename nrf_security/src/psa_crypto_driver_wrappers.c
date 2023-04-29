@@ -88,6 +88,12 @@
 #if defined(PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON)
 #include "oberon_kdf.h"
 #endif
+#ifdef PSA_NEED_OBERON_CTR_DRBG_DRIVER
+#include "oberon_ctr_drbg.h"
+#endif
+#ifdef PSA_NEED_OBERON_HMAC_DRBG_DRIVER
+#include "oberon_hmac_drbg.h"
+#endif
 
 /* Include TF-M builtin key driver */
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
@@ -2960,6 +2966,13 @@ psa_status_t psa_driver_wrapper_init_random(
     return PSA_SUCCESS;
 #endif
 
+#ifdef PSA_NEED_OBERON_CTR_DRBG_DRIVER
+    return oberon_ctr_drbg_init(&context->oberon_ctr_drbg_ctx);
+#endif /* PSA_NEED_OBERON_CTR_DRBG_DRIVER */
+#ifdef PSA_NEED_OBERON_HMAC_DRBG_DRIVER
+    return oberon_hmac_drbg_init(&context->oberon_hmac_drbg_ctx);
+#endif /* PSA_NEED_OBERON_HMAC_DRBG_DRIVER */
+
     (void)context;
     return PSA_ERROR_NOT_SUPPORTED;
 }
@@ -2999,6 +3012,13 @@ psa_status_t psa_driver_wrapper_get_random(
     return PSA_SUCCESS;
 #endif /* defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX) */
 
+#ifdef PSA_NEED_OBERON_CTR_DRBG_DRIVER
+    return oberon_ctr_drbg_get_random(&context->oberon_ctr_drbg_ctx, output, output_size);
+#endif /* PSA_NEED_OBERON_CTR_DRBG_DRIVER */
+#ifdef PSA_NEED_OBERON_HMAC_DRBG_DRIVER
+    return oberon_hmac_drbg_get_random(&context->oberon_hmac_drbg_ctx, output, output_size);
+#endif /* PSA_NEED_OBERON_HMAC_DRBG_DRIVER */
+
     (void)context;
     (void)output;
     (void)output_size;
@@ -3022,6 +3042,13 @@ psa_status_t psa_driver_wrapper_free_random(
 #endif
     return PSA_SUCCESS;
 #endif
+
+#ifdef PSA_NEED_OBERON_CTR_DRBG_DRIVER
+    return oberon_ctr_drbg_free(&context->oberon_ctr_drbg_ctx);
+#endif /* PSA_NEED_OBERON_CTR_DRBG_DRIVER */
+#ifdef PSA_NEED_OBERON_HMAC_DRBG_DRIVER
+    return oberon_hmac_drbg_free(&context->oberon_hmac_drbg_ctx);
+#endif /* PSA_NEED_OBERON_HMAC_DRBG_DRIVER */
 
     (void)context;
     return PSA_ERROR_NOT_SUPPORTED;

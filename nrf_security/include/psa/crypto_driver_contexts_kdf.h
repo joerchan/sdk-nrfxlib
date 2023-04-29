@@ -42,6 +42,12 @@
 #if defined(PSA_CRYPTO_DRIVER_HAS_HKDF_SUPPORT_OBERON)
 #include "oberon_kdf.h"
 #endif
+#ifdef PSA_NEED_OBERON_CTR_DRBG_DRIVER
+#include "oberon_ctr_drbg.h"
+#endif
+#ifdef PSA_NEED_OBERON_HMAC_DRBG_DRIVER
+#include "oberon_hmac_drbg.h"
+#endif
 
 /* Define the context to be used for an operation that is executed through the
  * PSA Driver wrapper layer as the union of all possible drivers' contexts.
@@ -62,6 +68,17 @@ typedef union {
 
 typedef union {
     unsigned dummy; /* Make sure this union is always non-empty */
+
+    // TODO: Use NULL always?
+    // nrf_cc3xx_platform_ctr_drbg_context_t cc3xx_ctr_drbg_context;
+
+    // nrf_cc3xx_platform_hmac_drbg_context_t cc3xx_hmac_drbg_context;
+#ifdef PSA_NEED_OBERON_CTR_DRBG_DRIVER
+    oberon_ctr_drbg_context_t oberon_ctr_drbg_ctx;
+#endif
+#ifdef PSA_NEED_OBERON_HMAC_DRBG_DRIVER
+    oberon_hmac_drbg_context_t oberon_hmac_drbg_ctx;
+#endif
 } psa_driver_random_context_t;
 
 #endif /* PSA_CRYPTO_DRIVER_CONTEXTS_KDF_H */
