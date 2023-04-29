@@ -47,6 +47,14 @@
 #include "cc3xx.h"
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
 
+#if defined(CONFIG_PSA_WANT_ALG_CTR_DRBG)
+#include "nrf_cc3xx_platform_ctr_drbg.h"
+#endif
+
+#if defined(CONFIG_PSA_WANT_ALG_HMAC_DRBG)
+#include "nrf_cc3xx_platform_hmac_drbg.h"
+#endif
+
 #if defined(PSA_CRYPTO_DRIVER_OBERON)
 #ifndef PSA_CRYPTO_DRIVER_PRESENT
 #define PSA_CRYPTO_DRIVER_PRESENT
@@ -2930,5 +2938,95 @@ psa_status_t psa_driver_wrapper_asymmetric_decrypt(const psa_key_attributes_t *a
             return( PSA_ERROR_INVALID_ARGUMENT );
     }
 }
+
+#if defined(CONFIG_PSA_CORE_OBERON)
+
+psa_status_t psa_driver_wrapper_init_random(
+    psa_driver_random_context_t* context)
+{
+    int err;
+#if defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX)
+    (void)context;
+// TODO: Sholud we support entropy context?
+#if 0
+#if defined(CONFIG_PSA_WANT_ALG_CTR_DRBG)
+    nrf_cc3xx_platform_ctr_drbg_free(&context->cc3xx_driver_ctx);
+#endif
+
+#if defined(CONFIG_PSA_WANT_ALG_HMAC_DRBG)
+    nrf_cc3xx_platform_hmac_drbg_free(&context->cc3xx_driver_ctx);
+#endif
+#endif
+    return PSA_SUCCESS;
+#endif
+
+    (void)context;
+    return PSA_ERROR_NOT_SUPPORTED;
+}
+
+
+psa_status_t psa_driver_wrapper_get_random(
+    psa_driver_random_context_t* context,
+    uint8_t* output, size_t output_size)
+{
+#if defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX)
+    int err;
+    size_t output_length;
+
+#if defined(CONFIG_PSA_WANT_ALG_CTR_DRBG)
+    err = nrf_cc3xx_platform_ctr_drbg_get(
+        NULL,
+        output,
+        output_size,
+        &output_length);
+#elif defined(CONFIG_PSA_WANT_ALG_HMAC_DRBG)
+    err = nrf_cc3xx_platform_hmac_drbg_get(
+        NULL,
+        output,
+        output_size,
+        &output_length);
+#else
+    #error "Enable CONFIG_PSA_WANT_ALG_CTR_DRBG or CONFIG_PSA_WANT_ALG_HMAC_DRBG"
+#endif
+    if (err != 0) {
+        return PSA_ERROR_HARDWARE_FAILURE;
+    }
+
+    if (output_size != output_length) {
+        return PSA_ERROR_INSUFFICIENT_ENTROPY;
+    }
+
+    return PSA_SUCCESS;
+#endif /* defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX) */
+
+    (void)context;
+    (void)output;
+    (void)output_size;
+    return PSA_ERROR_NOT_SUPPORTED;
+}
+
+psa_status_t psa_driver_wrapper_free_random(
+    psa_driver_random_context_t* context)
+{
+#if defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX)
+    (void)context;
+// TODO: Sholud we support entropy context?
+#if 0
+#if defined(CONFIG_PSA_WANT_ALG_CTR_DRBG)
+    return nrf_cc3xx_platform_ctr_drbg_free(&context->cc3xx_driver_ctx);
+#endif
+
+#if defined(CONFIG_PSA_WANT_ALG_HMAC_DRBG)
+    return nrf_cc3xx_platform_hmac_drbg_free(&context->cc3xx_driver_ctx);
+#endif
+#endif
+    return PSA_SUCCESS;
+#endif
+
+    (void)context;
+    return PSA_ERROR_NOT_SUPPORTED;
+}
+
+#endif /* CONFIG_PSA_CORE_OBERON */
 
 #endif /* MBEDTLS_PSA_CRYPTO_C */

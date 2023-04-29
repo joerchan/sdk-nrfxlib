@@ -13,6 +13,13 @@ menuconfig PSA_CRYPTO_DRIVER_CC3XX
 	help
 	  Enable PSA Driver for CryptoCell
 
+config PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX
+	bool
+	prompt "PSA Random support - cc3xx" if PSA_PROMPTLESS
+	# Always use CC3XX for random driver
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_GENERATE_RANDOM
+
 if PSA_CRYPTO_DRIVER_CC3XX
 
 config PSA_CRYPTO_DRIVER_HAS_CIPHER_SUPPORT_CC3XX
