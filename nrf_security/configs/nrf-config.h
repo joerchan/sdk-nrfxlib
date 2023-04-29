@@ -405,6 +405,14 @@ extern "C" {
 #define MBEDTLS_SSL_DEBUG_ALL
 #endif
 
+
+#if defined(CONFIG_PSA_CORE_OBERON)
+// TODO: Make this a config symbol?
+// #define MBEDTLS_PSA_KEY_SLOT_COUNT              16
+
+// #include "oberon_config.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif
