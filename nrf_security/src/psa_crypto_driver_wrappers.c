@@ -47,6 +47,16 @@
 #include "cc3xx.h"
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
 
+#if defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX_PLATFORM)
+#if defined(CONFIG_PSA_WANT_ALG_CTR_DRBG)
+#include "nrf_cc3xx_platform_ctr_drbg.h"
+#endif
+
+#if defined(CONFIG_PSA_WANT_ALG_HMAC_DRBG)
+#include "nrf_cc3xx_platform_hmac_drbg.h"
+#endif
+#endif /* defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX_PLATFORM) */
+
 #if defined(PSA_CRYPTO_DRIVER_OBERON)
 #ifndef PSA_CRYPTO_DRIVER_PRESENT
 #define PSA_CRYPTO_DRIVER_PRESENT
@@ -2890,6 +2900,13 @@ psa_status_t psa_driver_wrapper_asymmetric_decrypt(const psa_key_attributes_t *a
 psa_status_t psa_driver_wrapper_init_random(
     psa_driver_random_context_t* context)
 {
+#if defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX_PLATFORM)
+    /* Using internal context. */
+    (void)context;
+
+    return PSA_SUCCESS;
+#endif
+
     (void)context;
     return PSA_ERROR_NOT_SUPPORTED;
 }
@@ -2899,6 +2916,39 @@ psa_status_t psa_driver_wrapper_get_random(
     psa_driver_random_context_t* context,
     uint8_t* output, size_t output_size)
 {
+#if defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX_PLATFORM)
+    int err;
+    size_t output_length;
+
+    /* Using internal context. */
+    (void)context;
+
+#if defined(CONFIG_PSA_WANT_ALG_CTR_DRBG)
+    err = nrf_cc3xx_platform_ctr_drbg_get(
+        NULL,
+        output,
+        output_size,
+        &output_length);
+#elif defined(CONFIG_PSA_WANT_ALG_HMAC_DRBG)
+    err = nrf_cc3xx_platform_hmac_drbg_get(
+        NULL,
+        output,
+        output_size,
+        &output_length);
+#else
+    #error "Enable CONFIG_PSA_WANT_ALG_CTR_DRBG or CONFIG_PSA_WANT_ALG_HMAC_DRBG"
+#endif
+    if (err != 0) {
+        return PSA_ERROR_HARDWARE_FAILURE;
+    }
+
+    if (output_size != output_length) {
+        return PSA_ERROR_INSUFFICIENT_ENTROPY;
+    }
+
+    return PSA_SUCCESS;
+#endif /* defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX_PLATFORM) */
+
     (void)context;
     (void)output;
     (void)output_size;
@@ -2908,6 +2958,13 @@ psa_status_t psa_driver_wrapper_get_random(
 psa_status_t psa_driver_wrapper_free_random(
     psa_driver_random_context_t* context)
 {
+#if defined(PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX_PLATFORM)
+    /* Using nrf_cc3xx_platform without context. */
+    (void)context;
+
+    return PSA_SUCCESS;
+#endif
+
     (void)context;
     return PSA_ERROR_NOT_SUPPORTED;
 }

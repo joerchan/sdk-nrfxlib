@@ -51,6 +51,16 @@ config MBEDTLS_PSA_ACCEL_KEY_TYPE_CHACHA20
 		   (PSA_CRYPTO_DRIVER_CC3XX || PSA_CRYPTO_DRIVER_OBERON)
 
 
+# Special case cc3xx_platform driver entry for random generation
+config PSA_CRYPTO_DRIVER_GENERATE_RANDOM_CC3XX_PLATFORM
+	bool
+	default y
+	# Only Oberon PSA core supports generate random through driver interface.
+	depends on PSA_CORE_OBERON
+	depends on CRYPTOCELL_USABLE
+	depends on PSA_WANT_GENERATE_RANDOM
+
+
 rsource "nrf_cc3xx/Kconfig"
 
 rsource "nrf_oberon/Kconfig"
