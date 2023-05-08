@@ -120,13 +120,6 @@ if (COMPILE_PSA_APIS)
   )
 endif()
 
-# Add PSA RNG API for the entropy driver
-if(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG AND NOT CONFIG_BUILD_WITH_TFM)
-  list(APPEND src_crypto
-    ${CMAKE_CURRENT_LIST_DIR}/random_ext.c
-  )
-endif()
-
 append_with_prefix(src_crypto ${ARM_MBEDTLS_PATH}/library
   pem.c
   pkcs12.c
