@@ -10,7 +10,7 @@ config MBEDTLS_PSA_CRYPTO_C
 	default y
 	help
 	  Enable the Platform Security Architecture cryptography API.
-	  Corresponds to  setting in mbed TLS config file.
+	  Corresponds to setting in mbed TLS config file.
 
 if MBEDTLS_PSA_CRYPTO_C
 
